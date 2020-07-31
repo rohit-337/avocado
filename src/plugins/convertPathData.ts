@@ -30,7 +30,7 @@ export const defaultParams = {
   straightCurves: true,
   lineShorthands: true,
   curveSmoothShorthands: true,
-  floatPrecision: 3,
+  floatPrecision: 1,
   transformPrecision: 5,
   removeUseless: true,
   collapseRepeated: true,
@@ -55,7 +55,7 @@ function fn(item: JsApi, params: Params) {
   ) {
     return item;
   }
-  precision = params.floatPrecision;
+  precision = 1;
   error = +Math.pow(0.1, precision).toFixed(precision);
   roundData = precision > 0 && precision < 20 ? strongRound : round;
   if (params.makeArcs) {
@@ -88,7 +88,7 @@ function filters(
   const pathBase = [0, 0];
   let prev: any = {};
 
-  pathRes = pathRes.filter(function(item, index, path) {
+  pathRes = pathRes.filter(function (item, index, path) {
     let instruction = item.instruction;
     let data = item.data;
     let next = path[index + 1];
@@ -164,7 +164,7 @@ function filters(
         // check if next curves are fitting the arc
         let j = index;
         // tslint:disable-next-line:no-bitwise
-        for (; (next = path[++j]) && ~'cs'.indexOf(next.instruction); ) {
+        for (; (next = path[++j]) && ~'cs'.indexOf(next.instruction);) {
           let nextDataTemp = next.data;
           if (next.instruction === 's') {
             nextLonghand = makeLonghand(
@@ -260,7 +260,7 @@ function filters(
       // to get closer to absolute coordinates. Sum of rounded value remains same:
       // l .25 3 .25 2 .25 3 .25 2 -> l .3 3 .2 2 .3 3 .2 2
       if ('mltqsc'.indexOf(instruction) > -1) {
-        for (let i = data.length; i--; ) {
+        for (let i = data.length; i--;) {
           data[i] += item.base[i % 2] - relSubpoint[i % 2];
         }
       } else if (instruction === 'h') {
@@ -444,7 +444,7 @@ function filters(
 function convertToMixed(path: PathItem[], params: Params) {
   let prev = path[0];
 
-  path = path.filter(function(item, index) {
+  path = path.filter(function (item, index) {
     if (index === 0) {
       return true;
     }
@@ -458,7 +458,7 @@ function convertToMixed(path: PathItem[], params: Params) {
     const adata = data && data.slice(0);
 
     if ('mltqsc'.indexOf(instruction) > -1) {
-      for (let i = adata.length; i--; ) {
+      for (let i = adata.length; i--;) {
         adata[i] += item.base[i % 2];
       }
     } else if (instruction === 'h') {
@@ -573,7 +573,7 @@ function getIntersection(coords: number[]): Point | undefined {
  * @return {Array} output data array
  */
 function strongRound(data: number[]) {
-  for (let i = data.length; i-- > 0; ) {
+  for (let i = data.length; i-- > 0;) {
     if (+data[i].toFixed(precision) !== data[i]) {
       const rounded = +data[i].toFixed(precision - 1);
       data[i] =
@@ -714,7 +714,7 @@ function isArc(curve: Curve, circle: Circle) {
     return (
       Math.abs(
         getDistance(getCubicBezierPoint(curve, point), circle.center) -
-          circle.radius,
+        circle.radius,
       ) <= tolerance
     );
   });
@@ -774,7 +774,7 @@ function data2Path(params: Params, pathData: PathItem[]) {
  * @return {Array} output data array
  */
 function round(data: number[]) {
-  for (let i = data.length; i-- > 0; ) {
+  for (let i = data.length; i-- > 0;) {
     data[i] = Math.round(data[i]);
   }
   return data;
